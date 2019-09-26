@@ -82,9 +82,12 @@ public class TheBig {
 
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
-				if ((arr[i][0] > arr[j][0]) && (arr[i][1] > arr[j][1])) {
+				if(i == j) continue;
+				if ((arr[i][0] < arr[j][0]) && (arr[i][1] < arr[j][1])) {
+					continue;
+				} else {
 					answer[i]--;
-				} 
+				}
 			}
 			out.write(String.valueOf(answer[i]) + " ");
 		}
