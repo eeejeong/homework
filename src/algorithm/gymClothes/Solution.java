@@ -1,4 +1,4 @@
-package gymClothes;
+package algorithm.gymClothes;
 
 class Solution {
 

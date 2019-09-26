@@ -24,7 +24,7 @@ people				limit	return
 */
 
 
-package lifeBoat;
+package algorithm.lifeBoat;
 
 public class LifeBoat {
 

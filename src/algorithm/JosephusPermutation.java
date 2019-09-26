@@ -1,5 +1,5 @@
 /*
-날짜: 19-09-19
+날짜: 19-09-26
 문제: 조세퍼스 문제 
 출처: 백준 알고리즘
 
@@ -29,43 +29,47 @@ N과 K가 주어지면 (N, K)-조세퍼스 순열을 구하는 프로그램을 �
 
 package algorithm;
 
-import java.util.Arrays;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
 import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
 
 public class JosephusPermutation {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		Scanner scanner = new Scanner(System.in);
+		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(System.out));
 		int N = scanner.nextInt();
 		int K = scanner.nextInt();
 		
-		LinkedList<Integer> list = new LinkedList<>();
+		Queue<Integer> list = new LinkedList<>();
+		Queue<Integer> answer = new LinkedList<>();
 		
 		for (int i = 1 ; i <= N ; i ++) {
 			list.offer(i);
 		}
-		
-		int[] answer = new int[N];
-		int i = 0;
-		int flag = 0;
-		
+			
 		while(!list.isEmpty()) {
 			try {
-				answer[i] = list.get(flag + K - 1);
-				list.remove(flag + K - 1);
-				flag = flag + K - 1;
-				i++;
+				for(int i = 0; i < K - 1; i++) {
+					list.add(list.poll());
+				}
+				answer.add(list.poll());
 			} catch (IndexOutOfBoundsException e) {
-				answer[i] = list.get(flag + K - 1 - list.size());
-				list.remove(flag + K - 1 - list.size());
-				flag = flag + K - list.size() -2;
-				i++;
+				System.out.println("범위 초과");
 			}
 		}
 		
-		System.out.println(Arrays.toString(answer));
-
+		out.write("<");
+		for(int i = 0; i < N; i++) {
+			out.write(String.valueOf(answer.poll()));
+			if(i != N - 1) {
+				out.write(", ");
+			}
+		}
+		out.write(">");
+		
+		out.close();		
 	}
-
 }

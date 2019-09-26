@@ -1,4 +1,4 @@
-package lifeBoat;
+package algorithm.lifeBoat;
 
 public class Solution {
 	public int solution(int[] people, int limit) {

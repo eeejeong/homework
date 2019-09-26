@@ -27,7 +27,7 @@ n	lost	reserve		return
 
 */
 
-package gymClothes;
+package algorithm.gymClothes;
 
 import java.util.Scanner;
 
