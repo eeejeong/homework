@@ -53,33 +53,85 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.LinkedList;
-import java.util.Queue;
 import java.util.StringTokenizer;
+
+class Printer {
+
+	// Field
+	int firstLocation;
+	int priority;
+
+	// Constructor
+	public Printer(int firstLocation, int priority) {
+		this.firstLocation = firstLocation;
+		this.priority = priority;
+	}
+
+}
 
 public class PrinterQueue {
 
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(System.out));
-		
+
+		// 총 테스트케이스 개수 입력
 		int testcase = Integer.parseInt(in.readLine());
-		
-		for(int i = 0; i < testcase; i++) {
+
+		// 테스트케이스 만큼 반복
+		for (int i = 0; i < testcase; i++) {
+			// 기본 정보(base) 입력
 			String base = in.readLine();
 			StringTokenizer st1 = new StringTokenizer(base, " ");
+			// 문서의 개수
 			int theNumber = Integer.parseInt(st1.nextToken());
+			// 궁금한 문서의 현재 위치
 			int question = Integer.parseInt(st1.nextToken());
-			
-			Queue<Integer> queue = new LinkedList<>();
-			
+
+			LinkedList<Printer> queue = new LinkedList<>();
+
+			// 우선순위(priority) 입력
 			String priority = in.readLine();
 			StringTokenizer st2 = new StringTokenizer(priority);
-			
-			while(st2.hasMoreTokens()) {
-				queue.offer(Integer.parseInt(st2.nextToken()));
+
+			// 현재 위치와 우선순위를 하나씩 큐에 저장
+			for (int j = 0; j < theNumber; j++) {
+				queue.offer(new Printer(j, Integer.parseInt(st2.nextToken())));
 			}
-			
-			
+
+			int answer = 1;
+			while (true) {
+				// 현재 가장 앞에 있는 문서 객체 저장
+				Printer target = queue.poll();
+				boolean printable = true;
+				
+				for(int j = 0; j < queue.size(); j++) {
+					// 인쇄 목록에 있는 문서의 우선순위 비교
+					Printer temp = queue.get(j);
+					// 만약 현재 문서의 우선순위보다 높은 문서가 있다면 
+					if(temp.priority > target.priority) {
+						// 현재 문서는 가장 뒷 순서로 추가
+						queue.offer(target);
+						// 프린트 불가
+						printable = false;
+						break;
+					} 
+				}
+				
+				// 프린트가 가능한 경우
+				if(printable) {
+					// 사용자가 궁금했던 문서라면 검사 종료
+					if(target.firstLocation == question) {
+						out.write(String.valueOf(answer));
+						break;
+					// 아니라면 출력 개수 하나 추가 후 검사 반복
+					} else {
+						answer++;
+					}
+				}
+			}
+			out.write("\n");
+			out.flush();
 		}
 
 	}
