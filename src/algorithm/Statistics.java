@@ -43,10 +43,10 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 
-class Mode {
+class Mode{
 	int number;
 	int frequency;
 
@@ -54,7 +54,7 @@ class Mode {
 		this.number = number;
 		this.frequency = frequency;
 	}
-
+	
 }
 
 public class Statistics {
@@ -63,12 +63,16 @@ public class Statistics {
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(System.out));
 
+		// 숫자 개수
 		int N = Integer.parseInt(in.readLine());
 		int[] arr = new int[N];
+		
+		// 숫자 하나씩 배열에 저장
 		for (int i = 0; i < N; i++) {
 			arr[i] = Integer.parseInt(in.readLine());
 		}
 
+		// 배열 정렬
 		Arrays.sort(arr);
 
 		// 산술평균
@@ -85,11 +89,9 @@ public class Statistics {
 		out.write(median + "\n");
 
 		// 최빈값
-		ArrayList<Mode> modeArr = new ArrayList<>();
-		int mode;
-		if (N == 1) {
-			mode = arr[0];
-		} else {
+		LinkedList<Mode> modeQueue = new LinkedList<>();
+		int count = 0;
+		if (N != 1) {
 			int mostFrequent = 1;
 			for (int i = 0; i < N; i++) {
 				int frequency = 1;
@@ -97,10 +99,10 @@ public class Statistics {
 					if (arr[i] == arr[j]) {
 						frequency++;
 						if(j == N - 1) {
-							modeArr.add(new Mode(arr[i], frequency));
+							modeQueue.offer(new Mode(arr[i], frequency));
 						}
 					} else {
-						modeArr.add(new Mode(arr[i], frequency));
+						modeQueue.offer(new Mode(arr[i], frequency));
 						if (frequency >= mostFrequent) {
 							mostFrequent = frequency;
 						}
@@ -109,32 +111,39 @@ public class Statistics {
 					}			
 				}
 			}
-
-			ArrayList<Integer> modeArr2 = new ArrayList<>();
 			
-			for (int i = 0; i < modeArr.size(); i++) {
-				Mode temp = modeArr.get(i);
-				if (temp.frequency == mostFrequent) {
-					modeArr2.add(temp.number);
+			Mode target;
+			int size = modeQueue.size();
+			
+			for(int i = 0; i < size; i++) {
+				target = modeQueue.poll();
+				if(target.frequency == mostFrequent) {
+					count++;
+					modeQueue.add(target);
+				} else {
+					modeQueue.add(target);
 				}
 			}
 			
-			int[] modeArr3 = new int[modeArr2.size()];
+			int[] modeCandidate = new int[count];
 			
-			for (int i = 0; i < modeArr3.length; i++) {
-				modeArr3[i] = modeArr2.get(i);
+			for(int i = 0; i < size; i++) {
+				target = modeQueue.poll();
+				if(target.frequency == mostFrequent) {
+					modeCandidate[i] = target.number;
+				} else
 			}
-
-			Arrays.sort(modeArr3);
 			
-			if (modeArr3.length == 1) {
-				mode = modeArr3[0];
+			Arrays.sort(modeCandidate);
+			int mode;
+			if(modeCandidate.length == 1) {
+				mode = modeCandidate[0];
 			} else {
-				mode = modeArr3[1];
+				mode = modeCandidate[1];
 			}
+			out.write(mode + "\n");
 		}
-		out.write(mode + "\n");
-
+		
 		// 범위
 		int range = arr[N - 1] - arr[0];
 		out.write(range + "");
