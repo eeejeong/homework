@@ -43,39 +43,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-
-class Mode {
-	int number;
-	int frequency;
-
-	Mode(int number, int frequency) {
-		this.number = number;
-		this.frequency = frequency;
-	}
-}
-
-class ModeSort implements Comparator<Mode> {
-	int ret = 0;
-
-	@Override
-	public int compare(Mode m1, Mode m2) {
-		if (m1.frequency < m2.frequency) {
-			return 1;
-		} else if (m1.frequency == m2.frequency) {
-			if (m1.number < m2.number) {
-				return -1;
-			} else {
-				return 1;
-			}
-		} else {
-			return -1;
-		}
-	}
-}
 
 public class Statistics {
 
@@ -95,59 +63,78 @@ public class Statistics {
 		// 배열 정렬
 		Arrays.sort(arr);
 
-		// 산술평균
-		double sum = 0;
+		// 1. 산술평균
+		long sum = 0;
 		long arithmeticMean = 0;
+
+		// 1-1. 모든 정수의 합
 		for (int i = 0; i < N; i++) {
 			sum += arr[i];
 		}
+		// 1-2. 평균 구하기 (음수는 따로 처리)
 		arithmeticMean = Math.round((double) sum / N);
-		out.write(arithmeticMean + "\n");
 
-		// 중앙값
+		if (sum < 0) {
+			sum = Math.abs(sum);
+			arithmeticMean = Math.round((double) sum / N) * -1;
+		}
+
+		// 2. 중앙값
 		int median = arr[N / 2];
-		out.write(median + "\n");
 
-		// 최빈값
-		ArrayList<Mode> modeList = new ArrayList<>();
+		// 3. 최빈값
 		int mode = arr[0];
-		
-		if (N != 1) {
-			int mostFrequent = 1;
+	
+		if(N != 1) {
+			int mostFrequent = 0;
+			boolean candidate = false;
 			for (int i = 0; i < N; i++) {
-				// 현재 숫자의 빈도
-				int frequency = 1;
+				int frequency = 1; // 현재 검사할 숫자의 빈도
 				for (int j = i + 1; j < N; j++) {
-					if (arr[i] == arr[j]) {
-						frequency++;
-						if (j == N - 1) {
-							modeList.add(new Mode(arr[i], frequency));
+					
+					// 마지막 숫자 처리
+					if (j == N - 1) {
+						if (arr[i] == arr[j]) {
+							frequency++;
 						}
-					} else {
-						modeList.add(new Mode(arr[i], frequency));
-						if (frequency >= mostFrequent) {
-							mostFrequent = frequency;
+
+						if (frequency > mostFrequent) {
+							mode = arr[i];
+						} else if ((frequency == mostFrequent) && candidate) {
+							mode = arr[i];
 						}
 						i = j - 1;
 						break;
 					}
+
+					if (arr[i] == arr[j]) {
+						frequency++;
+					} else {
+						if (frequency > mostFrequent) {
+							mostFrequent = frequency;
+							mode = arr[i];
+							candidate = true;
+						} else if (frequency == mostFrequent) {
+							if (candidate)
+								mode = arr[i];
+							candidate = false;
+						}
+						i = j - 1;
+						break;
+					}
+
 				}
 			}
+		}
 
-			Collections.sort(modeList, new ModeSort());
-			
-			mode = modeList.get(0).number;
-
-			Mode target = modeList.get(1);
-			if (target.frequency == mostFrequent) {
-				mode = target.number;
-			}
-		}	
-		out.write(mode + "\n");
-
-		// 범위
+		// 4. 범위
 		int range = arr[N - 1] - arr[0];
-		out.write(range + "");
+
+		// 답 출력
+		out.write(arithmeticMean + "\n");
+		out.write(median + "\n");
+		out.write(mode + "\n");
+		out.write(range + "\n");
 		out.flush();
 
 	}
